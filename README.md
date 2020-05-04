@@ -28,7 +28,7 @@ It is recommended to delete your localstack docker image in order to pull the la
 
 Build
 ```
-mvn clean package -DbuildJar
+mvn clean package -PbuildJar
 ```
 
 Execute tests
