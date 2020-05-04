@@ -28,11 +28,10 @@ It is recommended to delete your localstack docker image in order to pull the la
 
 Build
 ```
-mvn clean package -Dmaven.test.skip=true
+mvn clean package -DbuildJar
 ```
 
 Execute tests
 ```
 mvn test
 ```
-or single tests with you IDE
