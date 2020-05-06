@@ -40,7 +40,7 @@ public abstract class AbstractAwsTest {
     protected AmazonDynamoDB getDynamoDbClient() {
 
         if (dynamoDbClient == null)
-            return AmazonDynamoDBClientBuilder.standard()
+            dynamoDbClient = AmazonDynamoDBClientBuilder.standard()
                     .withEndpointConfiguration(new AwsClientBuilder
                             .EndpointConfiguration(env.getProperty("aws.dynamodb"), env.getProperty("aws.default.region")))
                     .build();
@@ -50,7 +50,7 @@ public abstract class AbstractAwsTest {
 
     protected AWSLambda getLambdaClient() {
         if (lambdaClient == null)
-            return AWSLambdaClientBuilder.standard()
+            lambdaClient = AWSLambdaClientBuilder.standard()
                     .withEndpointConfiguration(
                             new AwsClientBuilder
                                     .EndpointConfiguration(env.getProperty("aws.lambda"), env.getProperty("aws.default.region"))).build();
@@ -61,7 +61,7 @@ public abstract class AbstractAwsTest {
     protected AmazonIdentityManagement getIamCLient() {
 
         if (iamClient == null)
-            return AmazonIdentityManagementClientBuilder.standard()
+            iamClient = AmazonIdentityManagementClientBuilder.standard()
                     .withEndpointConfiguration(
                             new AwsClientBuilder
                                     .EndpointConfiguration(env.getProperty("aws.iam"), env.getProperty("aws.default.region"))).build();
