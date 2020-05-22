@@ -15,11 +15,14 @@ import com.amazonaws.services.lambda.AWSLambdaClientBuilder;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.FunctionCode;
 import com.amazonaws.services.lambda.model.Runtime;
+import com.amazonaws.services.stepfunctions.AWSStepFunctions;
+import com.amazonaws.services.stepfunctions.AWSStepFunctionsClientBuilder;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +31,7 @@ import java.util.List;
 
 @SpringBootTest
 @ExtendWith(LocalstackDockerExtension.class)
+@TestPropertySource(locations = "/config.properties")
 public abstract class AbstractAwsTest {
 
     @Autowired
@@ -36,11 +40,12 @@ public abstract class AbstractAwsTest {
     private static AmazonDynamoDB dynamoDbClient;
     private static AWSLambda lambdaClient;
     private static AmazonIdentityManagement iamClient;
+    private static AWSStepFunctions stepFunctionsClient;
 
     protected AmazonDynamoDB getDynamoDbClient() {
 
         if (dynamoDbClient == null)
-            return AmazonDynamoDBClientBuilder.standard()
+            dynamoDbClient = AmazonDynamoDBClientBuilder.standard()
                     .withEndpointConfiguration(new AwsClientBuilder
                             .EndpointConfiguration(env.getProperty("aws.dynamodb"), env.getProperty("aws.default.region")))
                     .build();
@@ -50,7 +55,7 @@ public abstract class AbstractAwsTest {
 
     protected AWSLambda getLambdaClient() {
         if (lambdaClient == null)
-            return AWSLambdaClientBuilder.standard()
+            lambdaClient = AWSLambdaClientBuilder.standard()
                     .withEndpointConfiguration(
                             new AwsClientBuilder
                                     .EndpointConfiguration(env.getProperty("aws.lambda"), env.getProperty("aws.default.region"))).build();
@@ -61,12 +66,22 @@ public abstract class AbstractAwsTest {
     protected AmazonIdentityManagement getIamCLient() {
 
         if (iamClient == null)
-            return AmazonIdentityManagementClientBuilder.standard()
+            iamClient = AmazonIdentityManagementClientBuilder.standard()
                     .withEndpointConfiguration(
                             new AwsClientBuilder
                                     .EndpointConfiguration(env.getProperty("aws.iam"), env.getProperty("aws.default.region"))).build();
 
         return iamClient;
+    }
+
+    protected AWSStepFunctions getStepFunctionClient() {
+
+        if (stepFunctionsClient == null)
+            stepFunctionsClient = AWSStepFunctionsClientBuilder.standard().withEndpointConfiguration(
+                    new AwsClientBuilder
+                            .EndpointConfiguration(env.getProperty("aws.stepfunction"), env.getProperty("aws.default.region"))).build();
+
+        return stepFunctionsClient;
     }
 
     protected CreateTableRequest createTableRequest(String tableName, List<KeySchemaElement> attrKeySchemaList, List<AttributeDefinition> attrDefinitionList) {

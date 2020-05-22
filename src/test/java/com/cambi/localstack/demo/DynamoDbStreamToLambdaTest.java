@@ -14,7 +14,6 @@ import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,7 +23,6 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@TestPropertySource(locations = "/config.properties")
 @TestMethodOrder(value = MethodOrderer.OrderAnnotation.class)
 @LocalstackDockerProperties(services = {"iam:4593", "dynamodb", "dynamodbstreams", "lambda"})
 class DynamoDbStreamToLambdaTest extends AbstractAwsTest {

@@ -17,12 +17,12 @@ public class LambdaWriteToDynamoRequestHandler implements RequestHandler<Map<Str
     private AmazonDynamoDB client;
     private String tableName = "Table";
     private String defaulRegion = "us-east-1";
-    private String dynamodbHost = "us-east-1";
+    private String dynamodbHost = "http://localhost:4569";
 
     public LambdaWriteToDynamoRequestHandler() {
         client = AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AwsClientBuilder
-                        .EndpointConfiguration("http://localhost:4569", defaulRegion))
+                        .EndpointConfiguration(dynamodbHost, defaulRegion))
                 .build();
 
     }
