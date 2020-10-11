@@ -1,5 +1,5 @@
 import { Event } from '../model/Event';
-import logger from "winston";
+import {logger} from "../logger/logger";
 
 class KinesisToEventConverter {
 

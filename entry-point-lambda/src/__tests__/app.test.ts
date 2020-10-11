@@ -27,7 +27,9 @@ describe('Test app', function () {
         test('verifies null kinesis', () => {
 
             const spy = jest.spyOn(KinesisToEventConverter, 'convertFromKinesis');
-            app.lambdaHandler(kinesisJson);
+            const record = JSON.parse(kinesisJson);
+
+            app.lambdaHandler(record);
             expect(spy).toHaveBeenCalledTimes(1);
         });
     });

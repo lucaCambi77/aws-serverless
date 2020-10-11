@@ -1,7 +1,6 @@
 import {AWSError, Request, Response, Service} from 'aws-sdk';
 import {DocumentClient} from 'aws-sdk/clients/dynamodb';
 import {PromiseResult} from 'aws-sdk/lib/request';
-import StepFunctions from 'aws-sdk/clients/stepfunctions';
 
 export class PromiseTestUtil {
 
@@ -20,14 +19,5 @@ export class PromiseTestUtil {
         };
 
         return result;
-    }
-
-    public static createStepFunctionResponse(): PromiseResult<StepFunctions.Types.StartExecutionOutput, AWSError> {
-
-        return {
-            executionArn: '', startDate: null,
-            $response: new Response<StepFunctions.Types.StartExecutionOutput,
-                AWSError>()
-        };
     }
 }

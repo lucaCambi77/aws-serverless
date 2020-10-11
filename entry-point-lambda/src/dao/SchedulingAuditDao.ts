@@ -3,9 +3,9 @@ import DynamoDB, { PutItemInput } from 'aws-sdk/clients/dynamodb';
 import { PromiseResult } from 'aws-sdk/lib/request';
 import { AWSError } from 'aws-sdk';
 import { Event } from "../model/Event";
-import logger from "winston";
+import {logger} from "../logger/logger";
 
-export default class SchedulingAuditDao {
+class SchedulingAuditDao {
     private client: DocumentClient;
 
     constructor() {
@@ -24,3 +24,4 @@ export default class SchedulingAuditDao {
     }
 }
 
+export default new SchedulingAuditDao();

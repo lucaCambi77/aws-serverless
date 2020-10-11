@@ -1,18 +1,13 @@
 import SchedulingAuditDao from '../dao/SchedulingAuditDao';
 import {Event} from '../model/Event';
 import {Response} from "../model/Response";
-import logger from "winston";
+import {logger} from "../logger/logger";
 
-export default class SchedulingAuditService {
-    private dao: SchedulingAuditDao;
-
-    constructor() {
-        this.dao = new SchedulingAuditDao();
-    }
+class SchedulingAuditService {
 
     public put(insertDate: Date, event: Event, status: string, errors: Array<string>): Promise<Response> {
 
-        return this.dao.put(insertDate, event, status, errors)
+        return SchedulingAuditDao.put(insertDate, event, status, errors)
             .then((data) => {
 
                     if (data.$response.error) {
@@ -36,3 +31,5 @@ export default class SchedulingAuditService {
             );
     }
 }
+
+export default new SchedulingAuditService();

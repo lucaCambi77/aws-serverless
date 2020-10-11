@@ -1,7 +1,7 @@
 import fs = require('fs');
 import KinesisToEventConverter from '../KinesisToEventConverter';
 import { Event } from '../../model/Event';
-import logger from "winston";
+import {logger} from "../../logger/logger";
 
 const spyConsoleError = jest.spyOn(logger, 'error');
 const spyConsoleDebug = jest.spyOn(logger, 'debug');
