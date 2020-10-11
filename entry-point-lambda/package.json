@@ -1,0 +1,20 @@
+{
+  "name": "entry_point_lambda",
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node"
+  },
+  "version": "1.0.0",
+  "description": "Entry Point Lambda Function",
+  "author": "Rideways",
+  "scripts": {
+    "prepackage": "rm -rf build",
+    "test": "../node_modules/jest/bin/jest.js --coverage --silent",
+    "tsc": "../node_modules/typescript/bin/tsc",
+    "package": "npm run tsc",
+    "postpackage": "cp ../package.json build && cp ../.npmrc build"
+  },
+  "moduleDirectories": [
+    "src"
+  ]
+}

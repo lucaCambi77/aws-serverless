@@ -1,0 +1,39 @@
+{
+  "name": "scheduling_service",
+  "version": "1.0.0",
+  "description": "scheduling service dependency management",
+  "author": "Rideways",
+  "scripts": {
+    "lint": "eslint --ext .ts .",
+    "package": "npm --prefix success_handler run package && npm --prefix error_handler run package && npm --prefix entry-point-lambda run package",
+    "test": "npm --prefix success_handler run test && npm --prefix error_handler run test && npm --prefix entry-point-lambda run test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "prepare-commit-msg": "./scripts/git-commit-message.sh"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "eslint",
+      "git add ."
+    ]
+  },
+  "dependencies": {
+    "@rides/taxi-winston-logger": "^1.2.0",
+    "aws-sdk": "^2.685.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.26",
+    "@typescript-eslint/eslint-plugin": "^3.1.0",
+    "@typescript-eslint/parser": "^3.1.0",
+    "eslint": "^7.1.0",
+    "husky": "^4.2.5",
+    "jest": "^26.0.1",
+    "lint-staged": "^10.2.11",
+    "ts-jest": "^26.0.0",
+    "typescript": "^3.9.3"
+  }
+}

@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    localstack:
+        image: localstack/localstack:latest
+        ports:
+          - '4569:4569'
+          - '4582:4582'
+          - '4585:4585'
+        environment:
+          - SERVICES=cloudwatch,dynamodb,stepfunctions

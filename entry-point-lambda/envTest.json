@@ -1,0 +1,8 @@
+{
+  "EntryPointLambdaFunction": {
+    "SAM_LOCAL": true,
+    "STEPFUNCTION_HOST": "http://host.docker.internal:4585",
+    "DYNAMODB_HOST": "http://host.docker.internal:4569",
+    "stateMachineArn": "arn:aws:states:us-east-1:000000000000:stateMachine:scheduling-service-state-machine"
+  }
+}
