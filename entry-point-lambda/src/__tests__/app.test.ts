@@ -1,8 +1,10 @@
 import fs from 'fs';
+import KinesisToEventConverter from '../converter/KinesisToEventConverter';
+
+const app = require('../app');
 
 const kinesisJson = fs.readFileSync('./events/kinesis.json',
-    { encoding: 'utf8', flag: 'r' });
-
+    {encoding: 'utf8', flag: 'r'});
 
 describe('Test app', function () {
 
@@ -10,4 +12,23 @@ describe('Test app', function () {
         jest.clearAllMocks();
     });
 
+    describe('Verify kinesis', function () {
+
+        test('verifies null kinesis', () => {
+
+            const spy = jest.spyOn(KinesisToEventConverter, 'convertFromKinesis');
+            app.lambdaHandler(null);
+            expect(spy).toHaveBeenCalledTimes(0);
+        });
+    });
+
+    describe('Verify kinesis ok', function () {
+
+        test('verifies null kinesis', () => {
+
+            const spy = jest.spyOn(KinesisToEventConverter, 'convertFromKinesis');
+            app.lambdaHandler(kinesisJson);
+            expect(spy).toHaveBeenCalledTimes(1);
+        });
+    });
 });

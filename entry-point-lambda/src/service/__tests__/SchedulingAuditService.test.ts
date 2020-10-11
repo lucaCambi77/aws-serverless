@@ -1,8 +1,5 @@
 jest.mock('aws-sdk/clients/dynamodb');
 
-const TABLE = 'Foo';
-
-
 describe('Service Unit Test', () => {
 
     beforeEach(() => {
@@ -10,6 +7,9 @@ describe('Service Unit Test', () => {
     });
 
     describe('update', () => {
-        //
+
+        test('service calls dao', async () => {
+            //
+        });
     });
 });
