@@ -1,5 +1,5 @@
-import {Event} from '../model/Event';
-import {logger} from "@rides/taxi-winston-logger";
+import { Event } from '../model/Event';
+import logger from "winston";
 
 export default class KinesisToEventConverter {
 

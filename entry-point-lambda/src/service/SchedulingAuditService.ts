@@ -1,7 +1,7 @@
 import SchedulingAuditDao from '../dao/SchedulingAuditDao';
 import {Event} from '../model/Event';
 import {Response} from "../model/Response";
-import {logger} from "@rides/taxi-winston-logger";
+import logger from "winston";
 
 export default class SchedulingAuditService {
     private dao: SchedulingAuditDao;

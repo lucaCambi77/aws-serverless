@@ -12,7 +12,7 @@
     "test": "../node_modules/jest/bin/jest.js --coverage --silent",
     "tsc": "../node_modules/typescript/bin/tsc",
     "package": "npm run tsc",
-    "postpackage": "cp ../package.json build && cp ../.npmrc build"
+    "postpackage": "cp ../package.json build"
   },
   "moduleDirectories": [
     "src"

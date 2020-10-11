@@ -1,17 +1,16 @@
 {
-  "name": "scheduling_service",
+  "name": "lambda_example",
   "version": "1.0.0",
-  "description": "scheduling service dependency management",
-  "author": "Rideways",
+  "description": "lambda sam example",
+  "author": "Luca",
   "scripts": {
     "lint": "eslint --ext .ts .",
-    "package": "npm --prefix success_handler run package && npm --prefix error_handler run package && npm --prefix entry-point-lambda run package",
-    "test": "npm --prefix success_handler run test && npm --prefix error_handler run test && npm --prefix entry-point-lambda run test"
+    "package": "npm --prefix entry-point-lambda run package",
+    "test": "npm --prefix entry-point-lambda run test"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "prepare-commit-msg": "./scripts/git-commit-message.sh"
+      "pre-commit": "lint-staged"
     }
   },
   "lint-staged": {
@@ -21,8 +20,8 @@
     ]
   },
   "dependencies": {
-    "@rides/taxi-winston-logger": "^1.2.0",
-    "aws-sdk": "^2.685.0"
+    "aws-sdk": "^2.685.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@types/jest": "^25.2.3",
