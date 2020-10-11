@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
-Description: Serverless Application Model for Scheduling Service
+Description: Serverless Application
 
 Globals:
   Function:
@@ -9,55 +9,15 @@ Globals:
 Parameters:
   Application:
     Type: String
-    Default: SCHEDULING_SERVICE
-  OwningTeam:
+    Default: LAMBA_ENTRY_POINT
+  Table:
     Type: String
-    Default: TENG06
-  ProjectCode:
-    Type: String
-    Default: TAXIPRJ005
-  SchedulingAuditTable:
-    Type: String
-    Default: scheduling_audit
-  StepFunction:
-    Type: String
-    Default: Scheduling
-  ErrorHandler:
-    Type: String
-    Default: StepFunction-ErrorHandlerLambda-SchedulingService
-  SuccessHandler:
-    Type: String
-    Default: StepFunction-SuccessHandlerLambda-SchedulingService
-
-Mappings:
-  "140821111621":
-    us-west-2:
-      environment: dev
-      ddbreadwritecapacity: "10"
-      s3Bucket: cf-taxi-sam-deployments-us-west-2-dev
-      loglevel : debug
-    eu-west-1:
-      environment: qa
-      ddbreadwritecapacity: "10"
-      s3Bucket: cf-taxi-sam-deployments-eu-west-1-qa
-      loglevel : info
-  "124342901980":
-    eu-west-1:
-      environment: prod
-      ddbreadwritecapacity: "50"
-      loglevel : warn
+    Default: dummy_table
 
 Resources:
 
-  # CloudWatch for Step Function
-  StepFunctionCloudWatchLogGroup:
-    Type: AWS::Logs::LogGroup
-    Properties:
-      LogGroupName: !Join [ /, [ /step_functions,  !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", environment], !Ref StepFunction, workflow ] ]
-      RetentionInDays: 30
-
-  # DynamoDb audit table
-  SchedulingAuditDynamoDB:
+  # DynamoDb table
+  DynamoDB:
     Type: AWS::DynamoDB::Table
     Properties:
       AttributeDefinitions:
@@ -72,197 +32,25 @@ Resources:
         AttributeName: record_expiration
         Enabled: true
       ProvisionedThroughput:
-        ReadCapacityUnits: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", ddbreadwritecapacity]
-        WriteCapacityUnits: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", ddbreadwritecapacity]
-      TableName: !Ref SchedulingAuditTable
-      Tags:
-        - Key: Env
-          Value: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", environment]
-        - Key: Application
-          Value: !Ref Application
-        - Key: OwningTeam
-          Value: !Ref OwningTeam
-        - Key: ProjectCode
-          Value: !Ref ProjectCode
-
-  # Lambda function for step function final step in case of success
-  SuccessHandlerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda Function to update a specific task that has successfully finished a Step Function process for Scheduling service
-      FunctionName: !Ref SuccessHandler
-      CodeUri: success_handler/build
-      Handler: app.lambdaHandler
-      Runtime: nodejs12.x
-      Environment:
-        Variables:
-          LOG_LEVEL: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", loglevel]
-          SCHEDULING_AUDIT_TABLE: !Ref SchedulingAuditTable
-          SAM_LOCAL: false
-          CLOUDWATCH_HOST: NOT_DEFINED
-          DYNAMODB_HOST: NOT_DEFINED
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: Allow
-          Action:
-          - sts:AssumeRole
-          Principal:
-            Service:
-            - lambda.amazonaws.com
-      Policies:
-      - Statement:
-        - Effect: Allow
-          Action: dynamodb:UpdateItem
-          Resource: !GetAtt SchedulingAuditDynamoDB.Arn
-      - Statement:
-        - Effect: Allow
-          Action:
-          - cloudwatch:PutMetricData
-          - cloudwatch:PutMetricAlarm
-          - cloudwatch:GetMetricData
-          Resource: "*"
-      Tags:
-        Env: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", environment]
-        Application: !Ref Application
-        OwningTeam: !Ref OwningTeam
-        ProjectCode: !Ref ProjectCode
-
-  # Lambda function for step function final step in case of error
-  ErrorHandlerFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      Description: Lambda function which writes to the scheduling_audit table when an error occurs in the workflow.
-      FunctionName: !Ref ErrorHandler
-      Handler: app.lambda
-      Runtime: nodejs12.x
-      CodeUri: error_handler/build
-      MemorySize: 128
-      Environment:
-        Variables:
-          LOG_LEVEL: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", loglevel]
-          SCHEDULING_AUDIT_TABLE: !Ref SchedulingAuditTable
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: Allow
-          Action:
-          - sts:AssumeRole
-          Principal:
-            Service:
-            - lambda.amazonaws.com
-      Policies:
-      - Statement:
-        - Effect: Allow
-          Action: dynamodb:UpdateItem
-          Resource: !GetAtt SchedulingAuditDynamoDB.Arn
-      - Statement:
-        - Effect: Allow
-          Action:
-            - cloudwatch:PutMetricData
-            - cloudwatch:PutMetricAlarm
-            - cloudwatch:GetMetricData
-          Resource: "*"
-      Tags:
-        Env: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", environment]
-        Application: !Ref Application
-        OwningTeam: !Ref OwningTeam
-        ProjectCode: !Ref ProjectCode
-
-  # Iam Role for Step Function
-  StatesExecutionRole:
-    Type: "AWS::IAM::Role"
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-        - Effect: Allow
-          Action:
-          - sts:AssumeRole
-          Principal:
-            Service:
-            - states.amazonaws.com
-      Policies:
-        - PolicyName: LogPolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogDelivery
-                  - logs:GetLogDelivery
-                  - logs:UpdateLogDelivery
-                  - logs:DeleteLogDelivery
-                  - logs:ListLogDeliveries
-                  - logs:PutResourcePolicy
-                  - logs:DescribeResourcePolicies
-                  - logs:DescribeLogGroups
-                  - logs:DescribeDestinations
-                  - logs:PutDestination
-                  - logs:DeleteDestinations
-                Resource: "*"
-        - PolicyName: StateMachinePolicy
-          PolicyDocument:
-            Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Action:
-                  - states:CreateActivity
-                  - states:UpdateStateMachine
-                  - states:StartExecution
-                  - states:UntagResource
-                  - states:TagResource
-                  - states:CreateStateMachine
-                Resource: arn:aws:states:*:*:stateMachine:Scheduling
-      ManagedPolicyArns:
-        - arn:aws:iam::aws:policy/service-role/AWSLambdaRole
-
-  # Step Function State Machine for process steps
-  SchedulingAuditStepFunction:
-    Type: AWS::StepFunctions::StateMachine
-    Properties:
-      StateMachineName: !Ref StepFunction
-      DefinitionS3Location:
-          Bucket: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", s3Bucket]
-          Key: step_function.json
-      DefinitionSubstitutions:
-        ErrorHandlerFunction: !GetAtt ErrorHandlerFunction.Arn
-        SuccessHandlerFunction: !GetAtt SuccessHandlerFunction.Arn
-      RoleArn: !GetAtt [ StatesExecutionRole, Arn ]
-      LoggingConfiguration:
-        Destinations:
-          - CloudWatchLogsLogGroup:
-              LogGroupArn: !GetAtt StepFunctionCloudWatchLogGroup.Arn
-        IncludeExecutionData: true
-        Level: ALL
-      Tags:
-        - Key: Env
-          Value: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", environment]
-        - Key: Application
-          Value: !Ref Application
-        - Key: OwningTeam
-          Value: !Ref OwningTeam
-        - Key: ProjectCode
-          Value: !Ref ProjectCode
+        ReadCapacityUnits: 10
+        WriteCapacityUnits: 10
+      TableName: !Ref Table
 
   # Lambda function which process Kinesis input and starts Step Function
   EntryPointLambdaFunction:
     Type: AWS::Serverless::Function
     Properties:
-      Description: Entry Point Lambda that will read Kinesis Events and process them to start Step Function and audit DynamoDb for Scheduling service
-      FunctionName: EntryPointLambda-SchedulingService
+      Description: Entry Point Lambda that will read Kinesis Events and process them
+      FunctionName: EntryPointLambda
       CodeUri: entry-point-lambda/build
       Handler: app.lambdaHandler
       Runtime: nodejs12.x
       MemorySize: 512
       Environment:
         Variables:
-          LOG_LEVEL: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", loglevel]
-          stateMachineArn: !Ref SchedulingAuditStepFunction
-          SCHEDULING_AUDIT_TABLE: !Ref SchedulingAuditTable
+          LAMBA_TABLE: !Ref Table
           SAM_LOCAL: false
           DYNAMODB_HOST: NOT_DEFINED
-          STEPFUNCTION_HOST : NOT_DEFINED
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
         Statement:
@@ -276,11 +64,7 @@ Resources:
         - Statement:
           - Effect: Allow
             Action: dynamodb:PutItem
-            Resource: !GetAtt SchedulingAuditDynamoDB.Arn
-        - Statement:
-          - Effect: Allow
-            Action: states:StartExecution
-            Resource: !Ref SchedulingAuditStepFunction
+            Resource: !GetAtt DynamoDB.Arn
       Events:
         Stream:
           Type: Kinesis
@@ -288,11 +72,6 @@ Resources:
             Stream: !GetAtt EntryPointLambaInputStreamConsumer.ConsumerARN
             StartingPosition: LATEST
             BatchSize: 100
-      Tags:
-        Env: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", environment]
-        Application: !Ref Application
-        OwningTeam: !Ref OwningTeam
-        ProjectCode: !Ref ProjectCode
 
   # Kinesis Input Stream Event
   EntryPointLambaInputStream:
@@ -300,15 +79,6 @@ Resources:
     Properties:
       Name : "EntryPointLambaInputStream"
       ShardCount: 1
-      Tags:
-        - Key: Env
-          Value: !FindInMap [!Ref "AWS::AccountId", !Ref "AWS::Region", environment]
-        - Key: Application
-          Value: !Ref Application
-        - Key: OwningTeam
-          Value: !Ref OwningTeam
-        - Key: ProjectCode
-          Value: !Ref ProjectCode
 
   EntryPointLambaInputStreamConsumer:
     Type: "AWS::Kinesis::StreamConsumer"
