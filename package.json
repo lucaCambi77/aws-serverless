@@ -20,7 +20,7 @@
     ]
   },
   "dependencies": {
-    "aws-sdk": "^2.685.0",
+    "aws-sdk": "^2.814.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {
