@@ -48,7 +48,7 @@ Resources:
       MemorySize: 512
       Environment:
         Variables:
-          LAMBA_TABLE: !Ref Table
+          LAMBDA_TABLE: !Ref Table
           SAM_LOCAL: false
           DYNAMODB_HOST: NOT_DEFINED
       AssumeRolePolicyDocument:

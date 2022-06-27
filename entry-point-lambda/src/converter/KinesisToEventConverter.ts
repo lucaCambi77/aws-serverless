@@ -1,4 +1,4 @@
-import { Event } from '../model/Event';
+import {Event} from '../model/Event';
 import {logger} from "../logger/logger";
 
 class KinesisToEventConverter {
@@ -19,8 +19,7 @@ class KinesisToEventConverter {
             const event: Event = JSON.parse(kinesisData);
 
             if (event.executionTime) {
-                const longToDate: Date = new Date(event.executionTime);
-                event.executionTime = longToDate;
+                event.executionTime = new Date(event.executionTime);
             }
 
             logger.debug(`Processing KinesisEventRecord : ${JSON.stringify(event)}`);

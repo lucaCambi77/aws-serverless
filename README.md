@@ -1,8 +1,6 @@
-# Aws demo project for multiple steps processing
+# Aws demo project for reading a Kinesis stream and insert into Dynamo Db
 
-###
-
-Sources :
+## Sources :
 
 ### DynamoDb
 https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Introduction.html
@@ -20,18 +18,22 @@ https://github.com/localstack/localstack-java-utils
 ## Run
 Requirements
 
-- maven
-- java8
+- nodejs
 - docker
  
 It is recommended to delete your localstack docker image in order to pull the latest version.
 
+Set up
+```
+npm install
+```
+
 Build
 ```
-mvn clean package -PbuildJar
+npm package
 ```
 
 Execute tests
 ```
-mvn test
+npm test
 ```

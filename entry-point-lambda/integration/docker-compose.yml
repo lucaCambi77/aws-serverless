@@ -8,4 +8,4 @@ services:
           - '4582:4582'
           - '4585:4585'
         environment:
-          - SERVICES=cloudwatch,dynamodb,stepfunctions
+          - SERVICES=cloudwatch,dynamodb

@@ -5,7 +5,7 @@ import { AWSError } from 'aws-sdk';
 import { Event } from "../model/Event";
 import {logger} from "../logger/logger";
 
-class SchedulingAuditDao {
+class AuditDao {
     private client: DocumentClient;
 
     constructor() {
@@ -24,4 +24,4 @@ class SchedulingAuditDao {
     }
 }
 
-export default new SchedulingAuditDao();
+export default new AuditDao();
