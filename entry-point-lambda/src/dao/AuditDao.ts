@@ -1,8 +1,8 @@
-import { DocumentClient } from 'aws-sdk/lib/dynamodb/document_client';
-import DynamoDB, { PutItemInput } from 'aws-sdk/clients/dynamodb';
-import { PromiseResult } from 'aws-sdk/lib/request';
-import { AWSError } from 'aws-sdk';
-import { Event } from "../model/Event";
+import {DocumentClient} from 'aws-sdk/lib/dynamodb/document_client';
+import DynamoDB, {PutItemInput} from 'aws-sdk/clients/dynamodb';
+import {PromiseResult} from 'aws-sdk/lib/request';
+import {AWSError} from 'aws-sdk';
+import {Event} from "../model/Event";
 import {logger} from "../logger/logger";
 
 class AuditDao {
@@ -14,7 +14,7 @@ class AuditDao {
             new DynamoDB.DocumentClient({ endpoint: process.env.DYNAMODB_HOST });
     }
 
-    public put(insertDate: Date, event: Event, status: string, errors: Array<string>): Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>> {
+    public put(insertDate: Date, event: Event, errors: Array<string>): Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>> {
 
         const item: PutItemInput = null;
 

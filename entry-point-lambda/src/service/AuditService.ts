@@ -5,9 +5,9 @@ import {logger} from "../logger/logger";
 
 class AuditService {
 
-    public put(insertDate: Date, event: Event, status: string, errors: Array<string>): Promise<Response> {
+    public put(insertDate: Date, event: Event, errors: Array<string>): Promise<Response> {
 
-        return AuditDao.put(insertDate, event, status, errors)
+        return AuditDao.put(insertDate, event, errors)
             .then((data) => {
 
                     if (data.$response.error) {

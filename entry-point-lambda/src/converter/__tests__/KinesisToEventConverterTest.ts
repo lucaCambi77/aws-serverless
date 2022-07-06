@@ -1,6 +1,5 @@
-import fs = require('fs');
 import KinesisToEventConverter from '../KinesisToEventConverter';
-import { Event } from '../../model/Event';
+import {Event} from '../../model/Event';
 import {logger} from "../../logger/logger";
 
 const spyConsoleError = jest.spyOn(logger, 'error');
@@ -13,10 +12,14 @@ describe('Kinesis to Event Converter Test', () => {
     );
 
     test('Read correct json file', () => {
-        const kinesisJson = fs.readFileSync('./events/kinesis.json',
-            { encoding: 'utf8', flag: 'r' });
 
-        const record = JSON.parse(kinesisJson);
+        const record = {
+            Records: [{
+                kinesis: {
+                    data: "eyJ0YXNrIjoidGFzayIsImlkZW50aWZpZXIiOiJpZGVudGlmaWVyIiwiZXhlY3V0aW9uVGltZSI6MTU4OTI5MzkyNjU4NX0=",
+                }
+            }]
+        };
 
         const event: Event = KinesisToEventConverter.convertFromKinesis(record.Records[0]);
 
@@ -34,12 +37,11 @@ describe('Kinesis to Event Converter Test', () => {
     });
 
     test('Read null kinesis', () => {
-        const kinesisJson = fs.readFileSync('./events/kinesis.json',
-            { encoding: 'utf8', flag: 'r' });
-
-        const record = JSON.parse(kinesisJson);
-
-        record.Records[0].kinesis = null;
+        const record = {
+            Records: [{
+                kinesis: null
+            }]
+        };
 
         const event: Event = KinesisToEventConverter.convertFromKinesis(record.Records[0]);
 
@@ -48,12 +50,13 @@ describe('Kinesis to Event Converter Test', () => {
     });
 
     test('Read null data', () => {
-        const kinesisJson = fs.readFileSync('./events/kinesis.json',
-            { encoding: 'utf8', flag: 'r' });
-
-        const record = JSON.parse(kinesisJson);
-
-        record.Records[0].kinesis.data = null;
+        const record = {
+            Records: [{
+                kinesis: {
+                    data: null,
+                }
+            }]
+        };
 
         const event: Event = KinesisToEventConverter.convertFromKinesis(record.Records[0]);
 
