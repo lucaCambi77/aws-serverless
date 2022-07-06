@@ -37,7 +37,7 @@ describe('Service Unit Test', () => {
 
     describe('put item', () => {
 
-        test('service calls dao and response 200', async () => {
+        test('service calls dao and response ok', async () => {
 
             auditDaoPutSpy.mockReturnValueOnce(
                 new Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>>((resolve) => {
@@ -55,13 +55,14 @@ describe('Service Unit Test', () => {
             expect(auditDaoPutSpy).toHaveBeenCalledTimes(1);
         });
 
-        test('service calls dao and response 500', async () => {
+        test('service calls dao and response error', async () => {
+
+            const error = "error message";
 
             auditDaoPutSpy.mockReturnValueOnce(
                 new Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>>((resolve) => {
 
-                    documentClientPromiseResult.$response.error = {code: "CODE", message: "error message", name: "some error", time: new Date()};
-
+                    documentClientPromiseResult.$response.error = {code: "CODE", message: error, name: "some error", time: new Date()};
                     resolve(documentClientPromiseResult);
                 })
             );
@@ -70,6 +71,27 @@ describe('Service Unit Test', () => {
 
             expect(response).not.toBe(null);
             expect(response.status).toBe(500);
+            expect(response.error).toBe(error);
+            expect(auditDaoPutSpy).toHaveBeenCalledTimes(1);
+        });
+
+        test('service calls dao and response with reject error', async () => {
+
+            const unhandledError = "unhandled error";
+
+            auditDaoPutSpy.mockReturnValueOnce(
+                new Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>>((resolve) => {
+                    resolve(Promise.reject({
+                        message: unhandledError
+                    }));
+                })
+            );
+
+            const response = await AuditService.put(new Date(), {task: "task", executionTime: new Date(), identifier: "identifier"}, null);
+
+            expect(response).not.toBe(null);
+            expect(response.status).toBe(500);
+            expect(response.error).toBe(unhandledError);
             expect(auditDaoPutSpy).toHaveBeenCalledTimes(1);
         });
     });
