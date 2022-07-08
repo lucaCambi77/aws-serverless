@@ -1,5 +1,19 @@
 
-jest.mock('aws-sdk/clients/dynamodb');
+jest.doMock('aws-sdk', () => {
+    return {
+        DynamoDB: jest.fn(() => ({
+            DocumentClient: jest.fn(() => ({
+                put: jest.fn().mockImplementation(() => {
+                    return {
+                        promise() {
+                            return Promise.resolve({});
+                        }
+                    };
+                })
+            }))
+        }))
+    };
+});
 
 describe('Dao', () => {
 

@@ -18,6 +18,7 @@ class AuditService {
                     }
 
                     logger.info(`Insert new task completed successfully for ${event.task}`);
+                    
                     return {
                         error: null,
                         status: 200

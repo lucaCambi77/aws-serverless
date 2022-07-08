@@ -29,6 +29,10 @@ const documentClientPromiseResult: PromiseResult<DocumentClient.PutItemOutput, A
         AWSError>()
 };
 
+const event = {
+    task: "task", executionTime: new Date(), identifier: "identifier"
+};
+
 describe('Service Unit Test', () => {
 
     beforeEach(() => {
@@ -41,14 +45,12 @@ describe('Service Unit Test', () => {
 
             auditDaoPutSpy.mockReturnValueOnce(
                 new Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>>((resolve) => {
-
                     documentClientPromiseResult.$response.error = null;
-
                     resolve(documentClientPromiseResult);
                 })
             );
 
-            const response = await AuditService.put(new Date(), {task: "task", executionTime: new Date(), identifier: "identifier"}, null);
+            const response = await AuditService.put(new Date(), event, null);
 
             expect(response).not.toBe(null);
             expect(response.status).toBe(200);
@@ -61,13 +63,12 @@ describe('Service Unit Test', () => {
 
             auditDaoPutSpy.mockReturnValueOnce(
                 new Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>>((resolve) => {
-
                     documentClientPromiseResult.$response.error = {code: "CODE", message: error, name: "some error", time: new Date()};
                     resolve(documentClientPromiseResult);
                 })
             );
 
-            const response = await AuditService.put(new Date(), {task: "task", executionTime: new Date(), identifier: "identifier"}, null);
+            const response = await AuditService.put(new Date(), event, null);
 
             expect(response).not.toBe(null);
             expect(response.status).toBe(500);
@@ -87,7 +88,7 @@ describe('Service Unit Test', () => {
                 })
             );
 
-            const response = await AuditService.put(new Date(), {task: "task", executionTime: new Date(), identifier: "identifier"}, null);
+            const response = await AuditService.put(new Date(), event, null);
 
             expect(response).not.toBe(null);
             expect(response.status).toBe(500);

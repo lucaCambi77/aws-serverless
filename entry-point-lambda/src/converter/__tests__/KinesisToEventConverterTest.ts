@@ -34,6 +34,7 @@ describe('Kinesis to Event Converter Test', () => {
 
         expect(event).toBe(undefined);
         expect(spyConsoleError).toHaveBeenCalled();
+        expect(spyConsoleDebug).not.toHaveBeenCalled();
     });
 
     test('Read null kinesis', () => {
@@ -47,6 +48,7 @@ describe('Kinesis to Event Converter Test', () => {
 
         expect(event).toBe(undefined);
         expect(spyConsoleError).toHaveBeenCalled();
+        expect(spyConsoleDebug).not.toHaveBeenCalled();
     });
 
     test('Read null data', () => {
@@ -62,5 +64,48 @@ describe('Kinesis to Event Converter Test', () => {
 
         expect(event).toBe(undefined);
         expect(spyConsoleError).toHaveBeenCalled();
+        expect(spyConsoleDebug).not.toHaveBeenCalled();
+    });
+
+    test('Data read exception', () => {
+        const record = {
+            Records: [{
+                kinesis: {
+                    data: "data",
+                }
+            }]
+        };
+
+        const spyBufferFrom = jest.spyOn(Buffer, 'from');
+        spyBufferFrom.mockImplementation(() => {
+            throw new Error('Buffer Error');
+        });
+
+        const event: Event = KinesisToEventConverter.convertFromKinesis(record.Records[0]);
+
+        expect(event).toBe(undefined);
+        expect(spyConsoleError).toHaveBeenCalled();
+        expect(spyConsoleDebug).not.toHaveBeenCalled();
+    });
+
+    test('Json Parse exception', () => {
+        const record = {
+            Records: [{
+                kinesis: {
+                    data: "data",
+                }
+            }]
+        };
+
+        const spyJsonParse = jest.spyOn(JSON, 'parse');
+        spyJsonParse.mockImplementation(() => {
+            throw new Error('Json Parse Error');
+        });
+
+        const event: Event = KinesisToEventConverter.convertFromKinesis(record.Records[0]);
+
+        expect(event).toBe(undefined);
+        expect(spyConsoleError).toHaveBeenCalled();
+        expect(spyConsoleDebug).not.toHaveBeenCalled();
     });
 });

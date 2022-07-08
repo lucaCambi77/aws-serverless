@@ -9,7 +9,7 @@ echo $(\
     dynamodb \
     create-table \
     --table-name scheduling_audit \
-    --attribute-definitions AttributeName=task_id,AttributeType=S \
-    --key-schema AttributeName=task_id,KeyType=HASH \
+    --attribute-definitions AttributeName=taskId,AttributeType=S \
+    --key-schema AttributeName=taskId,KeyType=HASH \
     --provisioned-throughput ReadCapacityUnits=1,WriteCapacityUnits=1 \
 )

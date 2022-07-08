@@ -11,12 +11,22 @@ class AuditDao {
     constructor() {
         this.client = (process.env.SAM_LOCAL && process.env.SAM_LOCAL === 'false') ?
             new DynamoDB.DocumentClient() :
-            new DynamoDB.DocumentClient({ endpoint: process.env.DYNAMODB_HOST });
+            new DynamoDB.DocumentClient({endpoint: process.env.DYNAMODB_HOST});
     }
 
     public put(insertDate: Date, event: Event, errors: Array<string>): Promise<PromiseResult<DocumentClient.PutItemOutput, AWSError>> {
 
-        const item: PutItemInput = null;
+        const item: PutItemInput = {
+            Item: {
+                taskId: {S: event.task},
+                taskName: {S: event.task + '#' + event.identifier},
+                executionTime: {S: event.executionTime.toISOString()},
+                createdTimestamp: {S: insertDate.toISOString()}
+            }, TableName: process.env.SCHEDULING_AUDIT_TABLE
+        };
+
+        if (errors)
+            item.Item['errors'] = {SS: errors};
 
         logger.debug(`Insert new task ${event.task}`);
 
